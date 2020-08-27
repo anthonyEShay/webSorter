@@ -40,14 +40,55 @@
             
 		</div>
 		<div id="bodyText">
-            <h3>About the Sorting Game</h3>
-            <p>Discribe me</p>
+            <h3>About the Sorting Program</h3>
+            <p>This web based program was designed to teach about some of the most common in place sorting algorithms and provide a visual reference for how those algorithms are working behind the scene.</p>
+            <div style="float: left; width: 20%">Sort Type: <select name="sortType" id="sortT">
+                <option value="selection">Selection Sort</option>
+                <option value="bubble">Bubble Sort</option>
+                <option value="insertion">Insertion Sort</option>
+                </select>
+            </div>
+            <div style="float: left; width: 55%;">
+                Visual Sort Speed: <span id="sortValue"></span>
+                <input type="range" style="width: 100%" min="1" max="50" value="5" id="sortSpeed">
+                <br>Visual Sort Density: <span id="densValue"></span>
+                <input type="range" style="width: 100%" min="1" max="50" value="5" id="sortDens">
+            </div>
+            <div style="float: right; width: 20%">
+                <button type="button" onclick="startButton()">Begin</button>&emsp;&emsp;
+                <button type="button" onclick="#">Cancel</button>
+            </div>
+            <div style="display: inline-block; width: 2000px;"><br></div>
+            <span id="test"></span><span id="test2"></span>
 			<div id="gameBox"></div>
             
             
 		</div>
 	</div>
 </div>
-    <script>startGame()</script>
+    <script>
+        startGame(1000, 10, 70);
+        var sortSlide = document.getElementById("sortSpeed");
+        var denSlide = document.getElementById("sortDens");
+        document.getElementById("sortValue").innerHTML = sortSlide.value;
+        document.getElementById("densValue").innerHTML = denSlide.value;
+        
+        sortSlide.oninput = function() {
+            document.getElementById("sortValue").innerHTML = this.value;
+        }
+        denSlide.oninput = function(){
+            document.getElementById("densValue").innerHTML = this.value;
+        }
+        function startButton(){
+            tempSpeed = document.getElementById("sortSpeed").value;
+            tempDens = document.getElementById("sortDens").value;
+            tempSpeed = Math.round(1000/tempSpeed);
+            tempDens = Math.round(tempDens*3.53 + 6.47);
+            tempWid = Math.round(2200 / (3*tempDens + 1));
+            aString = tempSpeed.toString() + " " + tempDens.toString() + " " + tempWid.toString();
+            document.getElementById("test").innerHTML = aString;
+            startGame(tempSpeed, tempDens, tempWid);
+        }
+    </script>
 </body>
 </html>
