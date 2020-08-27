@@ -50,24 +50,24 @@
             </div>
             <div style="float: left; width: 55%;">
                 Visual Sort Speed: <span id="sortValue"></span>
-                <input type="range" style="width: 100%" min="1" max="50" value="5" id="sortSpeed">
+                <input type="range" style="width: 100%" min="1" max="100" value="1" id="sortSpeed">
                 <br>Visual Sort Density: <span id="densValue"></span>
-                <input type="range" style="width: 100%" min="1" max="50" value="5" id="sortDens">
+                <input type="range" style="width: 100%" min="1" max="50" value="1" id="sortDens">
             </div>
             <div style="float: right; width: 20%">
                 <button type="button" onclick="startButton()">Begin</button>&emsp;&emsp;
-                <button type="button" onclick="#">Cancel</button>
+                <button type="button" onclick="cancelFun()">Stop</button>
             </div>
             <div style="display: inline-block; width: 2000px;"><br></div>
-            <span id="test"></span><span id="test2"></span>
+            <span id="test">Steps taken:</span><span id="test2"></span>
 			<div id="gameBox"></div>
             
-            
+            <p>See the Code:&ensp;<a href="https://github.com/anthonyEShay/webSorter" target="_blank"><img height= "20px" src="../images/github-logo.png"></a></p>
 		</div>
 	</div>
 </div>
     <script>
-        startGame(1000, 10, 70);
+        startGame(10, 70, "selection");
         var sortSlide = document.getElementById("sortSpeed");
         var denSlide = document.getElementById("sortDens");
         document.getElementById("sortValue").innerHTML = sortSlide.value;
@@ -75,19 +75,20 @@
         
         sortSlide.oninput = function() {
             document.getElementById("sortValue").innerHTML = this.value;
+            tempSpeed = document.getElementById("sortSpeed").value;
+            tempSpeed = Math.round(1000/tempSpeed);
+            changeTimer(tempSpeed);
         }
         denSlide.oninput = function(){
             document.getElementById("densValue").innerHTML = this.value;
         }
         function startButton(){
-            tempSpeed = document.getElementById("sortSpeed").value;
             tempDens = document.getElementById("sortDens").value;
-            tempSpeed = Math.round(1000/tempSpeed);
             tempDens = Math.round(tempDens*3.53 + 6.47);
             tempWid = Math.round(2200 / (3*tempDens + 1));
-            aString = tempSpeed.toString() + " " + tempDens.toString() + " " + tempWid.toString();
-            document.getElementById("test").innerHTML = aString;
-            startGame(tempSpeed, tempDens, tempWid);
+            aString = intervalTimer.toString() + " " + tempDens.toString() + " " + tempWid.toString();
+            //document.getElementById("test").innerHTML = aString;
+            startGame(tempDens, tempWid, document.getElementById("sortT").value);
         }
     </script>
 </body>
