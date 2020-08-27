@@ -2,12 +2,14 @@
 
 var intervalTimer = 1000;
 var elementArray = [];
+var positionLog = [];
 var currentPos = 0;
 var currentPos2 = -1;
 var stepCounter = 0;
 
 function startGame(numElements, density, gameType) {
     elementArray = [];
+    positionLog = [];
     currentPos = 0;
     currentPos2 = -1;
     stepCounter = 0;
@@ -15,11 +17,12 @@ function startGame(numElements, density, gameType) {
     for (i = 0; i < numElements; i++){
         yValue = Math.floor(Math.random()*500) + 1;
         temp = new component(density, yValue, "green", xPosition, 0);
+        positionLog.push(xPosition);
         xPosition += density + Math.floor(density/2);
         elementArray.push(temp);
     }
     verifyClear(gameType);
-    //console.log("Here1");
+    console.log(positionLog.join());
     myGameArea.start(gameType);
 }
 
@@ -31,7 +34,7 @@ function returnGame(gameType){
         return bubbleUpdate;
     }
     if (gameType == "insertion"){
-        return selectionUpdate;
+        return insertionUpdate;
     }
 }
 
@@ -46,6 +49,10 @@ function verifyClear(gameType){
         lastElements = 0;
         numberSwaps = 0;
         currentPos2 = 1;
+    }
+    if(gameType == "insertion"){
+        outerLoop = 0;
+        innerLoop = 0;
     }
 }
 
@@ -102,11 +109,46 @@ function bubbleUpdate(){
     updateGameArea();
 }
 
+function insertionUpdate(){
+    if (outerLoop == elementArray.length){
+        myGameArea.cancel();
+    }else{
+        if (innerLoop < 0){
+            atemp = elementArray[outerLoop];
+            elementArray.splice(outerLoop, 1);
+            elementArray.splice(0, 0, atemp);
+            fixPositions(outerLoop + 1);
+            innerLoop = outerLoop;
+            outerLoop += 1;
+            currentPos = outerLoop;
+        }else if(elementArray[innerLoop].height < elementArray[outerLoop].height){
+            atemp = elementArray[outerLoop];
+            elementArray.splice(outerLoop, 1);
+            elementArray.splice(innerLoop + 1, 0, atemp);
+            fixPositions(outerLoop + 1);
+            innerLoop = outerLoop;
+            outerLoop += 1;
+            currentPos = outerLoop;
+        }else{
+            innerLoop -= 1;
+            currentPos = innerLoop;
+        }
+    }
+    stepCounter += 1;
+    updateGameArea();
+}
+
 function swapElements(pos1, pos2){
     atemp = elementArray[pos1].x;
     elementArray[pos1].x = elementArray[pos2].x;
     elementArray[pos2].x = atemp;
     [elementArray[pos1], elementArray[pos2] ] = [elementArray[pos2], elementArray[pos1] ];
+}
+
+function fixPositions(aCount){
+    for(i = 0; i < aCount; i++){
+        elementArray[i].x = positionLog[i];
+    }
 }
 
 var myGameArea = {
