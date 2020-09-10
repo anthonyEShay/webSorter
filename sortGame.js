@@ -86,6 +86,12 @@ function returnGame(gameType){
     if (gameType == "insertion"){
         return insertionUpdate;
     }
+    if (gameType == "heap"){
+        return heapsortUpdate;
+    }
+    if (gameType == "quick"){
+        return quicksortUpdate;
+    }
 }
 
 function verifyClear(gameType){
@@ -103,6 +109,16 @@ function verifyClear(gameType){
     if(gameType == "insertion"){
         outerLoop = 0;
         innerLoop = 0;
+    }
+    if(gameType == "heap"){
+        heapBottom = 0;
+        heapTop = elementArray.length - 1;
+    }
+    if (gameType == "quick"){
+        recStack = [];
+        recStack.push([0, elementArray.length - 1]);
+        currentPos = -1;
+        pivitCopys = 0;
     }
 }
 
@@ -204,6 +220,205 @@ function insertionUpdate(){
         updateGameArea();
         skipCounter = 0;
     }
+}
+
+var heapBottom = 0;
+var heapTop = 0;
+function heapsortUpdate(){
+    //children of index n at 2n + 1 and 2n + 2
+    //parent of n at floor( (n-1)/2 )
+    
+    if(heapBottom != elementArray.length){
+        if(heapInsert()){
+            heapBottom++;
+            currentPos = heapBottom;
+        }
+        if(heapBottom == elementArray.length){
+            currentPos = 0;
+        }
+    }else{
+        //extract the element at position 0 and move to index heapBottom
+        //When all complete heapBottom == -1 break
+        if(heapTop == 0){
+            updateGameArea();
+            cancelFun();
+            checkStatus();
+            return;
+        }else if(heapExtract()){
+            swapElements(0, heapTop);
+            heapTop--;
+            currentPos = 0;
+        }
+    }
+    
+    
+    stepCounter += 1;
+    skipCounter += 1;
+    if(skipCounter != skipSpeed){
+        heapsortUpdate();
+    }else{
+        updateGameArea();
+        skipCounter = 0;
+    }
+}
+
+function heapInsert(){
+    hParent = Math.floor((currentPos - 1)/2);
+    if(hParent < 1){
+        return true;
+    }
+    if(elementArray[hParent].height > elementArray[currentPos].height){
+        return true;
+    }else{
+        swapElements(hParent, currentPos);
+        currentPos = hParent;
+        return false;
+    }
+}
+
+function heapExtract(){
+    hchild1 = 2*currentPos + 1;
+    hchild2 = 2*currentPos + 2;
+    testing = elementArray[currentPos].height;
+    if(hchild1 > heapTop || hchild2 > heapTop){
+        if(hchild1 <= heapTop && elementArray[hchild1].height > testing){
+            swapElements(currentPos, hchild1);
+        }
+        return true;
+    }
+    if(testing > elementArray[hchild1].height && testing > elementArray[hchild2].height){
+        return true;
+    }else{
+        if(elementArray[hchild1].height > elementArray[hchild2].height){
+            swapElements(currentPos, hchild1);
+            currentPos = hchild1;
+        }else{
+            swapElements(currentPos, hchild2);
+            currentPos = hchild2;
+        }
+        return false;
+    }
+}
+
+var recStack = [];
+var pivitCopys = 0;
+function quicksortUpdate(){
+    //Look at current array range on top of recStack
+    //Random choose pivit, move pivit to position 0, update curPos and curPos2
+    if(recStack.length == 0){
+        cancelFun();
+        updateGameArea();
+        checkStatus();
+        return;
+    }
+    if(currentPos == -1){
+        stLength = recStack[0][1] - recStack[0][0];
+        currentPos = Math.floor(Math.random()*stLength) + recStack[0][0];
+        swapElements(currentPos, recStack[0][0]);
+        currentPos = recStack[0][0];
+        currentPos2 = currentPos + 1;
+    }else{
+        if(elementArray[currentPos].height < elementArray[currentPos2].height){
+            currentPos2++;
+        }else if (elementArray[currentPos].height > elementArray[currentPos2].height){
+            insertElement(currentPos2, currentPos - pivitCopys);
+            currentPos2++;
+            currentPos++;
+        }else{
+            insertElement(currentPos2, currentPos + 1);
+            currentPos++;
+            pivitCopys++;
+            currentPos2++;
+        }
+        if(currentPos2 > recStack[0][1]){
+            //console.log("-----");
+            //printRec();
+            //console.log("cur1: " + currentPos + " cur2: " + currentPos2 + " piv: " + pivitCopys);
+            solve = recStack[0][0] - (currentPos - pivitCopys);
+            if( Math.abs(solve) > 1 ){
+                recStack.push([recStack[0][0], (currentPos - pivitCopys) - 1 ]);
+            }
+            if(Math.abs(currentPos - recStack[0][1]) > 1){
+               recStack.push([currentPos + 1, recStack[0][1] ]);
+            }
+            recStack.splice(0, 1);
+            currentPos = -1;
+            pivitCopys = 0;
+        }
+    }
+    //currentPos should be on current pivit, currentPos2 on next unsorted element in array to anylaze
+    // if == : unsort put in curPos + 1, curPos++, x++, curPos2++ ; if unsort < curPos : unsort put in curPos - x where x in number of equivelent pivot matches 
+    
+    //When curPos2 == array.length; remove array range on top of stack; add two array ranges to top of stack first[begin value .. curPos - X] second[curPos + 1 .. length - 1]
+    //If new array range would be length 1 or 0 don't add
+    
+    stepCounter += 1;
+    skipCounter += 1;
+    if(skipCounter != skipSpeed){
+        quicksortUpdate();
+    }else{
+        updateGameArea();
+        skipCounter = 0;
+    }
+}
+
+function checkStatus(){
+    previous = -1;
+    document.getElementById("test3").innerHTML = "  Correct";
+    for(x of elementArray){
+        if(x.height < previous){
+            document.getElementById("test3").innerHTML = "  Wrong";
+            break;
+        }
+        previous = x.height;
+    }
+}
+
+function printRec(){
+    count = 0;
+    for(x of recStack){
+        console.log(count + " " + x.join());
+        count++;
+    }
+}
+
+function insertElement(elNum, newPos){
+    //printArray();
+    atemp = elementArray[elNum].x;
+    if(elNum > newPos){
+        elementArray[elNum].x = elementArray[newPos].x;
+        start = elNum - 1;
+        while(start >= newPos){
+            atemp2 = elementArray[start].x;
+            elementArray[start].x = atemp;
+            atemp = atemp2;
+            start--;
+        }
+        atemp = elementArray.splice(elNum, 1);
+        //printArray();
+        elementArray.splice(newPos, 0, atemp[0]);
+        //console.log(atemp);
+    }else if (elNum < newPos){
+        elementArray[elNum].x = elementArray[newPos].x;
+        start = elNum + 1;
+        while(start <= newPos){
+            atemp2 = elementArray[start].x;
+            elementArray[start].x = atemp;
+            atemp = atemp2;
+            start++;
+        }
+        atemp = elementArray.splice(elNum, 1);
+        elementArray.splice(newPos + 1, 0, atemp[0]);
+    }
+    //printArray();
+}
+
+function printArray(){
+    temp = [];
+    for(x of elementArray){
+        temp.push(x.height);
+    }
+    console.log(temp.join());
 }
 
 function swapElements(pos1, pos2){
