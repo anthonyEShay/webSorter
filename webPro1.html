@@ -46,13 +46,16 @@
                 <option value="selection">Selection Sort</option>
                 <option value="bubble">Bubble Sort</option>
                 <option value="insertion">Insertion Sort</option>
+                <option value="heap">Heapsort</option>
+                <option value="quick">Quicksort</option>
+                <option value="merge">Mergesort</option>
                 </select>
             </div>
             <div style="float: left; width: 55%;">
-                Visual Sort Speed: <span id="sortValue"></span>
+                <div style="float: left">Visual Sort Speed:&emsp;</div> <div id="sortValue" style="width: 25px; float: left"></div>&emsp;&emsp;&emsp;&emsp;<span ><button id="spButton" type="button" onclick="changeSkip()">x1</button></span>
                 <input type="range" style="width: 100%" min="1" max="100" value="1" id="sortSpeed">
                 <br>Visual Sort Density: <span id="densValue"></span>
-                <input type="range" style="width: 100%" min="1" max="50" value="1" id="sortDens">
+                <input type="range" style="width: 100%" min="10" max="150" value="1" id="sortDens">
             </div>
             <div style="float: right; width: 20%">
                 <button type="button" onclick="startButton()">Begin</button>&emsp;&emsp;
@@ -67,7 +70,7 @@
 	</div>
 </div>
     <script>
-        startGame(10, 70, "selection");
+        startGame(10, "selection");
         var sortSlide = document.getElementById("sortSpeed");
         var denSlide = document.getElementById("sortDens");
         document.getElementById("sortValue").innerHTML = sortSlide.value;
@@ -84,11 +87,16 @@
         }
         function startButton(){
             tempDens = document.getElementById("sortDens").value;
-            tempDens = Math.round(tempDens*3.53 + 6.47);
-            tempWid = Math.round(2200 / (3*tempDens + 1));
-            aString = intervalTimer.toString() + " " + tempDens.toString() + " " + tempWid.toString();
-            //document.getElementById("test").innerHTML = aString;
-            startGame(tempDens, tempWid, document.getElementById("sortT").value);
+            startGame(tempDens, document.getElementById("sortT").value);
+        }
+        function changeSkip(){
+            skipOrder = [1, 2, 4, 6];
+            curValue = document.getElementById("spButton").innerHTML;
+            curValue = curValue.substr(1);
+            temp = skipOrder.indexOf(parseInt(curValue)) + 1;
+            temp = temp == skipOrder.length ? 0 : temp;
+            skipSpeed = skipOrder[temp]
+            document.getElementById("spButton").innerHTML = "x" + skipOrder[temp];
         }
     </script>
 </body>

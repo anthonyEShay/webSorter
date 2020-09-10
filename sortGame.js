@@ -6,23 +6,73 @@ var positionLog = [];
 var currentPos = 0;
 var currentPos2 = -1;
 var stepCounter = 0;
+var skipSpeed = 1;
+var skipCounter = 0;
 
-function startGame(numElements, density, gameType) {
+function adjustBoxes(numBoxes, mapSize, atype){
+    numBoxes = parseInt(numBoxes);
+    mapSize = parseInt(mapSize);
+    atype = parseInt(atype);
+    boxDensity = numBoxes;
+    if(atype == 1){
+        density = Math.floor((mapSize*2) / (3*numBoxes + 1));
+        boxDensity = density;
+    }else{
+        density = numBoxes;
+    }
+    numberLevels = mapSize - Math.floor(.5*density);
+    numberLevels = numberLevels/(density + Math.floor(.5*density));
+    overage = Math.ceil(numberLevels) * (density + Math.floor(.5*density)) - (mapSize - 2);
+    
+    console.log(overage + " " + Math.ceil(numberLevels) + " " + density*1.5);
+    console.log(Math.floor(.35*density - 2)*Math.ceil(numberLevels));
+    
+    yFix = 0;
+    if ( overage >= Math.floor(.35*density - 2)*Math.ceil(numberLevels)){
+        numberLevels = Math.floor(numberLevels);
+    }else{
+        numberLevels = Math.ceil(numberLevels);
+        while(true){
+            yFix += 1;
+            if (yFix * numberLevels >= overage){
+                break;
+            }
+        }
+        while (true){
+            overage = Math.ceil(numberLevels) * (density + Math.floor(.5*density) - yFix) - (mapSize - 2);
+            if(overage < 0 && overage * -1 > (density + Math.floor(.5*density) - yFix)){
+                numberLevels += 1;
+            }else{
+                break;
+            }
+        }
+        density = density - yFix;
+    }
+    returnList = [numberLevels, density, boxDensity];
+    return returnList;
+}
+
+function startGame(numElements, gameType) {
     elementArray = [];
     positionLog = [];
     currentPos = 0;
     currentPos2 = -1;
     stepCounter = 0;
-    xPosition = Math.floor(density/2);
+    skipCounter = 0;
+    
+    xValues = adjustBoxes(parseInt(numElements), 1100, 1);
+    numElements = xValues[0];
+    xPosition = Math.floor(xValues[1]/2);
+    console.log(numElements + " " + xValues[1] + " " + xValues[2]);
+    
     for (i = 0; i < numElements; i++){
         yValue = Math.floor(Math.random()*500) + 1;
-        temp = new component(density, yValue, "green", xPosition, 0);
+        temp = new component(xValues[2], yValue, "green", xPosition, 0);
         positionLog.push(xPosition);
-        xPosition += density + Math.floor(density/2);
+        xPosition += xValues[1] + Math.floor(xValues[1]/2);
         elementArray.push(temp);
     }
     verifyClear(gameType);
-    console.log(positionLog.join());
     myGameArea.start(gameType);
 }
 
@@ -81,7 +131,13 @@ function selectionUpdate(){
         }
     }
     stepCounter += 1;
-    updateGameArea();
+    skipCounter += 1;
+    if(skipCounter != skipSpeed){
+        selectionUpdate();
+    }else{
+        updateGameArea();
+        skipCounter = 0;
+    }
 }
 
 
@@ -106,7 +162,13 @@ function bubbleUpdate(){
         currentPos2 = outerLoop + 1;
     }
     stepCounter += 1;
-    updateGameArea();
+    skipCounter += 1;
+    if(skipCounter != skipSpeed){
+        bubbleUpdate();
+    }else{
+        updateGameArea();
+        skipCounter = 0;
+    }
 }
 
 function insertionUpdate(){
@@ -135,7 +197,13 @@ function insertionUpdate(){
         }
     }
     stepCounter += 1;
-    updateGameArea();
+    skipCounter += 1;
+    if(skipCounter != skipSpeed){
+        insertionUpdate();
+    }else{
+        updateGameArea();
+        skipCounter = 0;
+    }
 }
 
 function swapElements(pos1, pos2){
