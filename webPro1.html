@@ -42,6 +42,7 @@
 		<div id="bodyText">
             <h3>About the Sorting Program</h3>
             <p>This web based program was designed to teach about some of the most common in place sorting algorithms and provide a visual reference for how those algorithms are working behind the scene.</p>
+            <div id="sortText"></div>
             <div style="float: left; width: 20%">Sort Type: <select name="sortType" id="sortT">
                 <option value="selection">Selection Sort</option>
                 <option value="bubble">Bubble Sort</option>
@@ -53,9 +54,9 @@
             </div>
             <div style="float: left; width: 55%;">
                 <div style="float: left">Visual Sort Speed:&emsp;</div> <div id="sortValue" style="width: 25px; float: left"></div>&emsp;&emsp;&emsp;&emsp;<span ><button id="spButton" type="button" onclick="changeSkip()">x1</button></span>
-                <input type="range" style="width: 100%" min="1" max="100" value="1" id="sortSpeed">
+                <input type="range" style="width: 100%" min="1" max="100" value="4" id="sortSpeed">
                 <br>Visual Sort Density: <span id="densValue"></span>
-                <input type="range" style="width: 100%" min="10" max="150" value="1" id="sortDens">
+                <input type="range" style="width: 100%" min="10" max="150" value="10" id="sortDens">
             </div>
             <div style="float: right; width: 20%">
                 <button type="button" onclick="startButton()">Begin</button>&emsp;&emsp;
@@ -70,9 +71,11 @@
 	</div>
 </div>
     <script>
+        changeTimer(250);
         startGame(10, "selection");
         var sortSlide = document.getElementById("sortSpeed");
         var denSlide = document.getElementById("sortDens");
+        var sortType = document.getElementById("sortT");
         document.getElementById("sortValue").innerHTML = sortSlide.value;
         document.getElementById("densValue").innerHTML = denSlide.value;
         
@@ -85,6 +88,30 @@
         denSlide.oninput = function(){
             document.getElementById("densValue").innerHTML = this.value;
         }
+        sortType.oninput = function(){
+            sortName = document.getElementById("sortT").value;
+            switch (sortName){
+                case 'selection':
+                    document.getElementById("sortText").innerHTML = selectionSortString;
+                    break;
+                case 'bubble':
+                    document.getElementById("sortText").innerHTML = bubbleSortString;
+                    break;
+                case 'insertion':
+                    document.getElementById("sortText").innerHTML = insertionSortString;
+                    break;
+                case 'heap':
+                    document.getElementById("sortText").innerHTML = heapSortString;
+                    break;
+                case 'quick':
+                    document.getElementById("sortText").innerHTML = quickSortString;
+                    break;
+                case 'merge':
+                    document.getElementById("sortText").innerHTML = mergeSortString;
+                    break;
+            }
+        }
+        
         function startButton(){
             tempDens = document.getElementById("sortDens").value;
             startGame(tempDens, document.getElementById("sortT").value);
@@ -98,6 +125,15 @@
             skipSpeed = skipOrder[temp]
             document.getElementById("spButton").innerHTML = "x" + skipOrder[temp];
         }
+        
+        selectionSortString = "<h3>Selection Sort</h3><p>Selection sort is a sorting algorith that. . .</p>"
+        bubbleSortString = "<h3>Bubble Sort</h3><p>Bubble sort is a sorting algorith that. . .</p>"
+        insertionSortString = "<h3>Insertion Sort</h3><p>Insertion sort is a sorting algorith that. . .</p>"
+        heapSortString = "<h3>Heap Sort</h3><p>Heap sort is a sorting algorith that. . .</p>"
+        quickSortString = "<h3>Quick Sort</h3><p>Quick sort is a sorting algorith that. . .</p>"
+        mergeSortString = "<h3>Merge Sort</h3><p>Merge sort is a sorting algorith that. . .</p>"
+        
+        document.getElementById("sortText").innerHTML = selectionSortString;
     </script>
 </body>
 </html>

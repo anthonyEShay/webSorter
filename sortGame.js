@@ -74,6 +74,7 @@ function startGame(numElements, gameType) {
     }
     verifyClear(gameType);
     myGameArea.start(gameType);
+    updateGameArea();
 }
 
 function returnGame(gameType){
@@ -91,6 +92,9 @@ function returnGame(gameType){
     }
     if (gameType == "quick"){
         return quicksortUpdate;
+    }
+    if (gameType == "merge"){
+        return mergesortUpdate;
     }
 }
 
@@ -119,6 +123,9 @@ function verifyClear(gameType){
         recStack.push([0, elementArray.length - 1]);
         currentPos = -1;
         pivitCopys = 0;
+    }
+    if (gameType == "merge"){
+        maxLevel = 0;
     }
 }
 
@@ -242,7 +249,7 @@ function heapsortUpdate(){
         if(heapTop == 0){
             updateGameArea();
             cancelFun();
-            checkStatus();
+            //checkStatus();
             return;
         }else if(heapExtract()){
             swapElements(0, heapTop);
@@ -303,12 +310,10 @@ function heapExtract(){
 var recStack = [];
 var pivitCopys = 0;
 function quicksortUpdate(){
-    //Look at current array range on top of recStack
-    //Random choose pivit, move pivit to position 0, update curPos and curPos2
     if(recStack.length == 0){
         cancelFun();
         updateGameArea();
-        checkStatus();
+        //checkStatus();
         return;
     }
     if(currentPos == -1){
@@ -346,16 +351,102 @@ function quicksortUpdate(){
             pivitCopys = 0;
         }
     }
-    //currentPos should be on current pivit, currentPos2 on next unsorted element in array to anylaze
-    // if == : unsort put in curPos + 1, curPos++, x++, curPos2++ ; if unsort < curPos : unsort put in curPos - x where x in number of equivelent pivot matches 
-    
-    //When curPos2 == array.length; remove array range on top of stack; add two array ranges to top of stack first[begin value .. curPos - X] second[curPos + 1 .. length - 1]
-    //If new array range would be length 1 or 0 don't add
-    
     stepCounter += 1;
     skipCounter += 1;
     if(skipCounter != skipSpeed){
         quicksortUpdate();
+    }else{
+        updateGameArea();
+        skipCounter = 0;
+    }
+}
+
+var sortLevel = 0;
+var maxLevel = 0;
+var nextStartPoint = 0;
+var leftRange = [];
+var rightRange = [];
+function mergesortUpdate(){
+    /*
+    console.log("-----");
+    console.log("Ml: " + maxLevel + ", Sl: " + sortLevel);
+    console.log("NSP: " + nextStartPoint + ", P1: " + currentPos + ", P2: " + currentPos2);
+    if(currentPos >= 0 && currentPos2 >= 0 && currentPos < elementArray.length && currentPos2 < elementArray.length){
+        console.log("E1: " + elementArray[currentPos].height + ", E2: " + elementArray[currentPos2].height);
+    }else{
+        console.log("E1: ---" + ", E2: ---");
+    }
+    console.log(leftRange.join());
+    console.log(rightRange.join());
+    */
+    if(maxLevel == 0){
+        maxLevel = Math.log10(elementArray.length) / Math.log10(2);
+        maxLevel = Math.pow(2, Math.floor(maxLevel));
+        sortLevel = 1;
+        currentPos = 0;
+        currentPos2 = 1;
+        leftRange = [0, 0];
+        rightRange = [1, 1];
+        nextStartPoint = 2;
+    }else{
+        if(currentPos > leftRange[1] || currentPos2 > rightRange[1]){
+            if (nextStartPoint == -1){
+                sortLevel *= 2;
+                if (sortLevel > maxLevel){
+                    cancelFun();
+                    updateGameArea();
+                    //checkStatus();
+                    return;
+                }
+                currentPos = 0;
+                currentPos2 = sortLevel;
+                leftRange = [0, sortLevel - 1];
+                rightRange = [sortLevel, sortLevel + sortLevel - 1];
+                nextStartPoint = rightRange[1] + 1;
+                if (leftRange[1] >= elementArray.length){
+                    leftRange[1] = elementArray.length - 1;
+                    nextStartPoint = -1;
+                }
+                if (rightRange[1] >= elementArray.length){
+                    rightRange[1] = elementArray.length - 1;
+                    nextStartPoint = -1;
+                }
+            }else{
+                currentPos = nextStartPoint;
+                currentPos2 = nextStartPoint + sortLevel;
+                leftRange = [currentPos, currentPos + sortLevel - 1];
+                if (leftRange[1] >= elementArray.length){
+                    leftRange[1] = elementArray.length - 1;
+                    nextStartPoint = -1;
+                }
+                rightRange = [currentPos2, currentPos2 + sortLevel - 1];
+                if (rightRange[1] >= elementArray.length){
+                    rightRange[1] = elementArray.length - 1;
+                    nextStartPoint = -1;
+                }else{
+                    nextStartPoint = rightRange[1] + 1;
+                }
+            }
+        }else{
+            if (elementArray[currentPos].height <= elementArray[currentPos2].height){
+                currentPos += 1;
+                leftRange[0] += 1;
+            }else{
+                insertElement(currentPos2, currentPos);
+                currentPos += 1;
+                currentPos2 += 1;
+                leftRange[0] += 1;
+                leftRange[1] += 1;
+                rightRange[0] += 1;
+            }
+        }
+    }
+    
+    
+    stepCounter += 1;
+    skipCounter += 1;
+    if(skipCounter != skipSpeed){
+        mergesortUpdate();
     }else{
         updateGameArea();
         skipCounter = 0;
