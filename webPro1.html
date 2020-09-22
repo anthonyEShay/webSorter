@@ -41,7 +41,9 @@
 		</div>
 		<div id="bodyText">
             <h3>About the Sorting Program</h3>
-            <p>This web based program was designed to teach about some of the most common in place sorting algorithms and provide a visual reference for how those algorithms are working behind the scene.</p>
+            <p>This web based program is created entirely with Html and JavaScript. It was designed to teach students new to algorithms about some of the most common sorting algorithms in computer science. The program is able to do this by providing a visual reference of the data being worked on as well as a red box signifying where actions are currently taking place. Along with a short description about each algorithm this program is designed to show how those algorithms work behind the scene to sort a given set of data.</p>
+            <p>The program visualizes data elements with randomly sized bars. These bars are then sorted by height from shortest to tallest. Each sorting algorithm has been broken down to it’s most basic step so that the data can be progressed through the algorithm one iteration at a time. Some of the algorithms, like merge sort, were not designed to be an in place algorithm as shown in the picture representation. So, some slight changes needed to be made to the classic algorithm in order to make it work with the parameters the program has.</p>
+            
             <div id="sortText"></div>
             <div style="float: left; width: 20%">Sort Type: <select name="sortType" id="sortT">
                 <option value="selection">Selection Sort</option>
@@ -126,12 +128,17 @@
             document.getElementById("spButton").innerHTML = "x" + skipOrder[temp];
         }
         
-        selectionSortString = "<h3>Selection Sort</h3><p>Selection sort is a sorting algorith that. . .</p>"
-        bubbleSortString = "<h3>Bubble Sort</h3><p>Bubble sort is a sorting algorith that. . .</p>"
-        insertionSortString = "<h3>Insertion Sort</h3><p>Insertion sort is a sorting algorith that. . .</p>"
-        heapSortString = "<h3>Heap Sort</h3><p>Heap sort is a sorting algorith that. . .</p>"
-        quickSortString = "<h3>Quick Sort</h3><p>Quick sort is a sorting algorith that. . .</p>"
-        mergeSortString = "<h3>Merge Sort</h3><p>Merge sort is a sorting algorith that. . .</p>"
+        selectionSortString = "<h3>Selection Sort</h3><p>Selection sort is a standard O(n<sup>2</sup>) sorting algorithm. It functions by dividing the data into two parts: a sorted section and an unsorted section. This algorithm can easily be done in place by having the sorted section be placed at the beginning of the data. The sorted section is built up one element at a time by scanning through the entirety of the unsorted section and finding the smallest element. That smallest element is then added to the end of the sorted section. When there are no longer any elements in the unsorted section the data has been sorted.</p>"
+        
+        bubbleSortString = "<h3>Bubble Sort</h3><p>Bubble sort is a very simple to implement  O(n<sup>2</sup>) sorting algorithm. The algorithm simply repeatedly travels through the data set keeping track of an element n and its neighbor n+1. If the neighbor is smaller than the current element the algorithm switches them. It continues to do this until no more switching needs to take place signifying a sorted list.</p><br>"
+        
+        insertionSortString = "<h3>Insertion sort</h3><p>Insertion sort is another O(n<sup>2</sup>) sorting algorithm but it tends to perform better than most other O(n<sup>2</sup>) algorithms like selection and bubble sort. This is in part due to its efficiency with data sets that begin substantially sorted. The algorithm works like selection sort in that it divides the data up into a sorted and unsorted section. For every element in the unsorted section the algorithm goes through the sorted data to find where the element belongs and then places it in the correct section. In substantially sorted data the algorithm will often be able to simply place that element at one of the ends of the sorted section and not have to traverse into the data to find a correct position.</p>"
+        
+        heapSortString = "<h3>Heap Sort</h3><p>Heapsort is an efficient O(n log n) sorting algorithm that makes use of special data structure known as a  heap in order to dramatically improve its performance. In functions similarly to selection sort in that it separates the data into a sorted and unsorted section. The differences end their because heapsort then transforms the unsorted section into a heap data structure. The heap structure is designed so that it will always have either the highest or lowest value element at the top of the structure. This means, unlike in selection sort, the algorithm no longer needs to iterate through the entirety of the unsorted section to find the next element to sort.</p>"
+        
+        quickSortString = "<h3>Quick Sort</h3><p>Quicksort is an efficient O(n log n) sorting algorithm that utilizes a divide-and-conquer style strategy to effectively split the data into smaller more manageable sections. The algorithm works by repeatedly choosing an element to work around. The algorithm goes through its current working section and moves all elements less in size to one side and all those greater to the other side. The algorithm then divides up both sides into smaller subsections that then each have a new pivot chosen and are then sorted in the same way.</p>"
+        
+        mergeSortString = "<h3>Merge Sort</h3><p>Merge sort is an efficient O(n log n) sorting algorithm that, like quicksort, utilizes a divide-and-conquer style strategy to effectively split the data into smaller more manageable sections. The algorithm first divides up the data into smaller and smaller sections until each section is only 1 element large. The algorithm then begins to merge these sections together two at a time and in order. So, every two sections will be merged into one larger sorted section. This continues until the last two sections remaining are merged back into the full data set.</p>"
         
         document.getElementById("sortText").innerHTML = selectionSortString;
     </script>
